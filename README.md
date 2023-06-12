@@ -50,7 +50,6 @@ Monitoring solution provided by David, Jan, Luca
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
-https://img.shields.io/badge/-Linux-C70A5C?style=for-the-badge
 
 [issues-shield]: https://img.shields.io/badge/-Issues-blue?style=for-the-badge&logo=appveyor
 [issues-url]: https://github.com/CPNV-MON1/Prometheus/issues
