@@ -39,6 +39,7 @@ Monitoring solution provided by David, Jan, Luca
 
 ### Built With
 
+* [![Linux][Linux.io]][Linux-url]
 * [![Prometheus][Prometheus.io]][Prometheus-url]
 * [![Graphana][Graphana.io]][Graphana-url]
 
@@ -49,8 +50,13 @@ Monitoring solution provided by David, Jan, Luca
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
+https://img.shields.io/badge/-Linux-C70A5C?style=for-the-badge
+
 [issues-shield]: https://img.shields.io/badge/-Issues-blue?style=for-the-badge&logo=appveyor
 [issues-url]: https://github.com/CPNV-MON1/Prometheus/issues
+
+[Linux-io]: https://img.shields.io/badge/-Linux-C70A5C?style=for-the-badge
+[Linux-url]: https://ubuntu.com/download/server
 
 [Prometheus.io]: https://img.shields.io/badge/Prometheus-red?style=for-the-badge
 [Prometheus-url]: https://prometheus.io/
