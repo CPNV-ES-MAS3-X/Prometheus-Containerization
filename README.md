@@ -15,7 +15,7 @@
 Monitoring solution provided by David, Jan, Luca
   <p align="center">
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/CPNV-MON1/Prometheus/wiki"><strong>Explore the docs »</strong></a>
     <br />
     <br />
     <a href="https://github.com/DavidRoulet">David's Repo</a>
