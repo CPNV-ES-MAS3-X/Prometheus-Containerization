@@ -12,7 +12,7 @@
   </a>
 
   <h3 align="center"> Prometheus Monitoring !</h3>
-Monitoring solution provided by David, Jan, Luca
+Monitoring solution provided by David, Yann, Luca
   <p align="center">
     <br />
     <a href="https://github.com/CPNV-MON1/Prometheus/wiki"><strong>Explore the docs »</strong></a>
