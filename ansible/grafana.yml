@@ -1,0 +1,118 @@
+---
+###################################################################################
+# Purpose       :   Download and setup Grafana
+# Author        :   Luca Bassi
+# Date          :   26.10.2023
+# Version       :   1.1
+###################################################################################
+
+
+#------------------------------------------------------------
+#
+# 0 – General Ansible configuration
+#
+#------------------------------------------------------------
+
+- hosts: all
+  
+  vars:
+
+    - grafana_signing_key: https://packages.grafana.com/gpg.key
+    - grafana_repositories: "deb https://packages.grafana.com/oss/deb stable main"
+
+    - grafana_packages:
+      - grafana
+
+    - grafana_base_user: 'admin'
+    - grafana_base_password: 'pa$$w0rd'
+    
+  become: yes
+  tasks:
+
+
+##------------------------------------------------------------
+#
+# 1 – Apt updates
+#
+#------------------------------------------------------------
+    - name: Update apt repo and cache on all Debian/Ubuntu boxes
+      apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+
+    - name: install gpg for key repo
+      ansible.builtin.apt:
+        name: "gpg"
+        state: present
+        update_cache: true
+
+    - name: add grafana apt-key
+      apt_key: 
+        url: '{{grafana_signing_key}}' 
+        state: present 
+
+    - name: add grafana apt repository
+      apt_repository: 
+        repo: '{{ grafana_repositories }}' 
+        state: present 
+        filename: grafana 
+        update_cache: yes
+
+    - name: Update apt repo and cache on all Debian/Ubuntu boxes
+      apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+
+    - name: Ensure Grafana packages are installed
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+      loop: "{{ grafana_packages }}"
+
+    - name: Allow Http requests for put and get base data in database
+      replace:
+        dest: /etc/grafana/grafana.ini
+        regexp: ';logs = /var/log/grafana'
+        replace: 'logs = /var/log/grafana'
+        backup: yes
+
+    - name: Allow Http requests for put and get base data in database
+      replace:
+        dest: /etc/grafana/grafana.ini
+        regexp: ';plugins = /var/lib/grafana/plugins'
+        replace: 'plugins = /var/lib/grafana/plugins'
+        backup: yes
+
+    - name: Allow Http requests for put and get base data in database
+      replace:
+        dest: /etc/grafana/grafana.ini
+        regexp: ';protocol = http'
+        replace: 'protocol = http'
+        backup: yes
+
+    - name: Allow Http requests for put and get base data in database
+      replace:
+        dest: /etc/grafana/grafana.ini
+        regexp: ';admin_user = admin'
+        replace: 'admin_user = {{grafana_base_user}}'
+        backup: yes
+
+    - name: Allow Http requests for put and get base data in database
+      replace:
+        dest: /etc/grafana/grafana.ini
+        regexp: ';admin_password = admin'
+        replace: 'admin_password = {{grafana_base_password}}'
+        backup: yes
+
+    - name: Just force systemd to reread configs (2.4 and above)
+      ansible.builtin.systemd:
+        daemon_reload: true
+
+    - name: Enable service httpd and ensure it is not masked
+      ansible.builtin.systemd:
+        name: grafana-server
+        enabled: true
+        masked: no
+
+    - name: Enable a timer unit for dnf-automatic
+      ansible.builtin.systemd:
+        name: grafana-server
+        state: started
+        enabled: true

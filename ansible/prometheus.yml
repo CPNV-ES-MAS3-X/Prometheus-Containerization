@@ -1,0 +1,106 @@
+---
+
+  - name: "Prometheus"
+    hosts: all
+    tasks:
+
+      - name: "Update & upgrade"
+        apt: upgrade=dist
+
+
+      - name: "Create group prometheus"
+        ansible.builtin.group:
+          name: "prometheus"
+          state: present
+
+      - name: "Add user prometheus"
+        ansible.builtin.user:
+          name: "prometheus"
+          groups: "prometheus"
+          shell: "/sbin/nologin" 
+          system: true
+
+      - name: "Create /etc/prometheus"
+        ansible.builtin.file:
+          path: "/etc/prometheus"
+          state: "directory"
+          mode: '0755'
+
+
+      - name: "Create /var/lib/prometheus"
+        ansible.builtin.file:
+          path: "/var/lib/prometheus"
+          state: "directory"
+          mode: '0755'
+
+      - name: Download prometheus
+        ansible.builtin.get_url:
+          url: "https://github.com/prometheus/prometheus/releases/download/v2.37.8/prometheus-2.37.8.linux-amd64.tar.gz"
+          dest: /tmp/prometheus.tar.gz
+          mode: '0440'
+
+      - name: Untar
+        ansible.builtin.unarchive:
+          src: /tmp/prometheus.tar.gz
+          dest: /tmp
+          remote_src: yes
+
+
+      - name: cpy prometheus
+        ansible.builtin.copy:
+          src: /tmp/prometheus-2.37.8.linux-amd64/prometheus
+          dest: /usr/local/bin/
+          mode: 0111
+          remote_src: true
+
+      - name: cpy promtool
+        ansible.builtin.copy:
+          src: /tmp/prometheus-2.37.8.linux-amd64/promtool
+          dest: /usr/local/bin/
+          mode: 0111
+          remote_src: true
+
+      - name: cpy prometheus.yml
+        ansible.builtin.copy:
+          src: /tmp/prometheus-2.37.8.linux-amd64/prometheus.yml
+          dest: /etc/prometheus/
+          remote_src: true 
+
+      - name: cpy consoles
+        ansible.builtin.copy:
+          src: /tmp/prometheus-2.37.8.linux-amd64/consoles
+          dest: /etc/prometheus/
+          remote_src: true
+
+      - name: cpy console_libraries
+        ansible.builtin.copy:
+          src: /tmp/prometheus-2.37.8.linux-amd64/console_libraries
+          dest: /etc/prometheus/
+          remote_src: true
+
+      - name: Creating service file
+        ansible.builtin.copy:
+          src: "./prometheus.service"
+          dest: "/etc/systemd/system/prometheus.service"
+      
+      - name: Chown /var/lib/prometheus
+        ansible.builtin.file:
+          path: /var/lib/prometheus 
+          owner: "prometheus"
+          group: "prometheus"
+
+      - name: Create service
+        ansible.builtin.systemd:
+          name: prometheus
+          daemon_reload: true
+          enabled: true
+
+      - name: Start Prometheus
+        ansible.builtin.systemd:
+          name: prometheus
+          state: started
+
+
+
+
+
