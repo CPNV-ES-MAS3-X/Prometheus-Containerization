@@ -13,8 +13,8 @@
 #
 #------------------------------------------------------------
 
-- hosts: all
-  
+
+- hosts: all 
   vars:
 
     - grafana_signing_key: https://packages.grafana.com/gpg.key

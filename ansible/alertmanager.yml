@@ -1,0 +1,112 @@
+---
+###################################################################################
+# Purpose       :   Download and setup Prometheus
+# Author        :   Yann Grossenbacher
+# Date          :   14.11.2023
+# Version       :   1.0
+###################################################################################
+
+
+#------------------------------------------------------------
+#
+# 0 – General Ansible configuration
+#
+#------------------------------------------------------------
+
+
+- hosts: all
+  become: yes
+  tasks:
+
+    - name: "Update & upgrade"
+      apt: "update_cache=yes force_apt_get=yes cache_valid_time=3600"
+
+    - name: "Create group alertmanager"
+      ansible.builtin.group:
+        name: "alertmanager"
+        state: present
+
+    - name: "Add user alertmanager"
+      ansible.builtin.user:
+        name: "alertmanager"
+        groups: "alertmanager"
+        shell: "/sbin/nologin" 
+        system: true
+
+    - name: "Create /etc/alertmanager"
+      ansible.builtin.file:
+        path: "/etc/alertmanager"
+        state: "directory"
+        mode: '0755'
+
+
+    - name: "Create /var/lib/alertmanager"
+      ansible.builtin.file:
+        path: "/var/lib/alertmanager"
+        state: "directory"
+        mode: '0755'
+
+    - name: Download alertmanager
+      ansible.builtin.get_url:
+        url: "https://github.com/prometheus/alertmanager/releases/download/v0.25.0/alertmanager-0.25.0.linux-amd64.tar.gz"
+        dest: /tmp/alertmanager.tar.gz
+        mode: '0440'
+
+    - name: Untar
+      ansible.builtin.unarchive:
+        src: /tmp/alertmanager.tar.gz
+        dest: /tmp
+        remote_src: yes
+
+    - name: cpy alertmanager
+      ansible.builtin.copy:
+        src: /tmp/alertmanager-0.25.0.linux-amd64/alertmanager
+        dest: /usr/local/bin/
+        mode: 0111
+        remote_src: true
+
+    - name: cpy alertmanager.yml
+      ansible.builtin.copy:
+        src: /tmp/alertmanager-0.25.0.linux-amd64/alertmanager.yml
+        dest: /etc/alertmanager/
+        remote_src: true 
+
+    - name: Creating service file
+      ansible.builtin.copy:
+        src: "./alertmanager.service"
+        dest: "/etc/systemd/system/alertmanager.service"
+      
+    - name: Chown /var/lib/alertmanager
+      ansible.builtin.file:
+        path: /var/lib/alertmanager 
+        owner: "alertmanager"
+        group: "alertmanager"
+
+    - name: Chown /usr/local/bin/
+      ansible.builtin.file:
+        path: /usr/local/bin/alertmanager
+        owner: "alertmanager"
+        group: "alertmanager"
+
+    - name: Chown /etc/alertmanager
+      ansible.builtin.file:
+        path: /etc/alertmanager
+        owner: "alertmanager"
+        group: "alertmanager"
+
+
+    - name: Create service
+      ansible.builtin.systemd:
+        name: alertmanager
+        daemon_reload: true
+        enabled: true
+
+    - name: Start Alertmanager
+      ansible.builtin.systemd:
+        name: alertmanager
+        state: started
+
+
+
+
+
