@@ -1,0 +1,92 @@
+---
+- hosts: srv-prometheus-01
+  become: true
+
+  tasks:
+
+    - name: Update apt repo and cache on all Debian/Ubuntu boxes
+      apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+
+    - name: Install Docker CLI
+      apt:
+        name: docker-compose
+        state: present
+
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Pull nginx Docker image
+      docker_image:
+        name: prom/prometheus
+        source: pull
+
+    - name: Create volume
+      docker_volume:
+        name: alertmanager
+        driver: local
+
+    - name: Create volume
+      docker_volume:
+        name: prometheus
+        driver: local
+
+    - name: copy config file 
+      template:
+        src: files/prometheus/prometheus.yml
+        dest: "/var/lib/docker/volumes/prometheus"
+
+    - name: copy config file 
+      template:
+        src: files/prometheus/rules.yml
+        dest: "/var/lib/docker/volumes/prometheus"
+
+    - name: copy config file 
+      template:
+        src: files/alertmanager/alertmanager.yml
+        dest: "/var/lib/docker/volumes/alertmanager/"
+
+    - name: Run nginx Docker container
+      docker_container:
+        name: prometheus
+        image: prom/prometheus
+        state: started
+        ports:
+          - "9090:9090"
+        volumes:
+          - "/var/lib/docker/volumes/prometheus/prometheus.yml:/prometheus/prometheus.yml:ro"
+          - "/var/lib/docker/volumes/prometheus/rules.yml:/prometheus/rules.yml:ro"
+          - "/var/lib/docker/volumes/prometheus/web.yml:/prometheus/web.yml:ro"
+
+    - name: Run nginx Docker container
+      docker_container:
+        name: node-exporter
+        image: prom/node-exporter
+        state: started
+        ports:
+          - "9100:9100"
+
+    - name: Run nginx Docker container
+      docker_container:
+        name: alertmanager
+        image: prom/alertmanager
+        state: started
+        ports:
+          - "9093:9093"
+        volumes:
+          - "/var/lib/docker/volumes/alertmanager/alertmanager.yml:/alertmanager/alertmanager.yml:ro"
+
+    - name: Create a network
+      docker_network:
+        name: prom_network
+
+    - name: Add a container to a network, leaving existing containers connected
+      docker_network:
+        name: prom_network
+        connected:
+          - "prometheus"
+          - "node-exporter"
+          - "alertmanager"
+        appends: yes
