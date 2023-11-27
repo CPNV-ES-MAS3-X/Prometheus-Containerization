@@ -1,9 +1,9 @@
 ---
 ###################################################################################
 # Purpose       :   Download and setup Grafana
-# Author        :   Luca Bassi
-# Date          :   26.10.2023
-# Version       :   1.1
+# Author        :   Luca Bassi & David Roulet
+# Date          :   18.11.2023
+# Version       :   2
 ###################################################################################
 
 
@@ -15,6 +15,7 @@
 
 
 - hosts: all 
+  
   vars:
 
     - grafana_signing_key: https://packages.grafana.com/gpg.key
@@ -116,3 +117,16 @@
         name: grafana-server
         state: started
         enabled: true
+##------------------------------------------------------------
+#
+# 3 - Add & configure datasource
+#
+#------------------------------------------------------------
+    - name: create prometheus datasource
+      community.grafana.grafana_datasource:
+        name: local_prometheus
+        ds_type: prometheus
+        url: http://localhost:3000
+        ds_url: http://localhost:9090
+        access: proxy
+        tls_skip_verify: true
