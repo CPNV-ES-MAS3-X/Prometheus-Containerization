@@ -1,0 +1,22 @@
+server {
+
+	listen 443 ssl http2 default_server;
+	listen [::]:443 ssl http2 default_server;
+	include snippets/self-signed.conf;
+	include snippets/ssl-params.conf;
+
+#        root /var/www/html;
+
+        # Add index.php to the list if you are using PHP
+#        index index.html index.htm index.nginx-debian.html;
+
+        server_name prometheus.cld.education;
+
+	access_log /var/log/nginx/prometheus.cld.education.log;
+
+	location / {
+		proxy_pass       http://10.20.0.10:9090;
+
+	}
+}
+
