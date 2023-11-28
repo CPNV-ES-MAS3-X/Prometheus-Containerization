@@ -212,8 +212,6 @@ groups:
     rules:
       - alert: DebianServiceDown
         expr: apache_up == 0
-#        expr: absent((up{instance="10.20.0.50:9100", job="debian_host", machinename="mas-lincli-01"} ) and (apache_up == 1))
-#        for: 1m
         labels:
           severity: critical
           reboot: true
@@ -223,7 +221,6 @@ groups:
         annotations:
           summary: "Instance [{{ $labels.instance }}] down"
           description: "[{{ $labels.machinename }}] has been down for more than 1 minute."
-
 
   - name: Windows_Time_Service_Down
     rules:
