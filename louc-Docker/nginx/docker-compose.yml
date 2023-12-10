@@ -1,4 +1,9 @@
 version: '3'
+
+networks:
+  net:
+    external: true
+    
 services:
   nginx:
     build:
@@ -11,6 +16,3 @@ services:
     networks: 
       - "net"
 
-networks:
-  net:
-    external: true
