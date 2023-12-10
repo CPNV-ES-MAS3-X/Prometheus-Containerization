@@ -1,0 +1,72 @@
+---
+services:
+  prom:
+    image: "prom/prometheus:latest"
+    container_name: "prom"
+    restart: always
+    networks:
+      lan:
+        ipv4_address: 192.168.10.10
+    volumes:
+      - ./prom/:/etc/prometheus/
+    ports:
+      - 9090:9090
+  alert:
+    image: "prom/alertmanager:latest"
+    container_name: "alert"
+    restart: always
+    networks:
+      lan:
+        ipv4_address: 192.168.10.20
+    ports:
+      - 9093:9093
+  grafa:
+    image: "grafana/grafana-enterprise:latest"
+    container_name: "grafa"
+    restart: always
+    networks:
+      lan:
+        ipv4_address: 192.168.10.30
+    volumes:
+      - ./grafa/grafana.ini:/usr/share/grafana/grafana.ini
+    ports:
+      - 3000:3000
+
+  influx:
+    image: "influxdb:latest"
+    container_name: "influx"
+    restart: always
+    networks:
+      lan:
+        ipv4_address: 192.168.10.40
+
+    ports:
+      - 8086:8086
+
+  proxy:
+    image: "nginx:latest"
+    container_name: "proxy"
+    restart: always
+    networks:
+      lan:
+        ipv4_address: 192.168.10.50
+      wan:
+        ipv4_address: 192.168.20.10
+    volumes:
+      - ./nginx/:/etc/nginx/conf.d/
+    ports:
+      - 8080:8080
+
+networks:
+  lan:
+    driver: bridge  # A terme "none"
+    ipam:
+      config:
+        - subnet: 192.168.10.0/24
+          gateway: 192.168.10.1
+  wan:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.20.0/24
+          gateway: 192.168.20.1
