@@ -18,8 +18,11 @@ services:
     networks:
       lan:
         ipv4_address: 192.168.10.20
+    volumes:
+      - ./alert/:/config/
     ports:
       - 9093:9093
+    command: --config.file=/config/alertmanager.yml --log.level=debug
   grafa:
     image: "grafana/grafana-enterprise:latest"
     container_name: "grafa"
@@ -28,7 +31,7 @@ services:
       lan:
         ipv4_address: 192.168.10.30
     volumes:
-      - ./grafa/grafana.ini:/usr/share/grafana/grafana.ini
+      - ./grafa/grafana.ini:/etc/grafana/grafana.ini
     ports:
       - 3000:3000
 
