@@ -1,0 +1,58 @@
+version: '3.7'
+
+networks:
+  back-net:
+
+volumes:
+    prometheus-data: {}
+    grafana-data: {}
+
+services:
+  prometheus:
+    build:
+      context: ./prometheus/
+      dockerfile: Dockerfile
+    container_name: prometheus
+    restart: unless-stopped
+    ports:
+      - 9090:9090
+    networks: 
+      - "back-net"
+    volumes:
+#      - ./prometheus/config_files/:/etc/prometheus/
+      - prometheus-data:/prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --web.config.file=/etc/prometheus/web.yml
+      - --storage.tsdb.path=/prometheus
+      - --web.external-url=http://prometheus.cld.education
+      - --log.level=warn
+
+  alertmanager:
+    build:
+      context: ./alertmanager/
+      dockerfile: Dockerfile
+    container_name: alertmanager
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/alertmanager/alertmanager.yml
+      - --storage.path=/alertmanager    
+    ports:
+      - 9093:9093
+    networks: 
+      - "back-net"
+
+
+  grafana:
+    build:
+      context: ./grafana/
+      dockerfile: Dockerfile
+    container_name: grafana
+    restart: unless-stopped   
+    ports:
+      - 3000:3000
+    networks: 
+      - "back-net"
+    volumes:
+      - ./grafana/datasources:/etc/grafana/provisioning/datasources
+      - grafana-data:/var/lib/grafana

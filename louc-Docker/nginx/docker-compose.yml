@@ -1,0 +1,16 @@
+version: '3'
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - 80:80
+    networks: 
+      - "net"
+
+networks:
+  net:
+    external: true
