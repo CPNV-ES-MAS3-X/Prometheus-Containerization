@@ -29,6 +29,7 @@ services:
       - --web.external-url=http://prometheus.cld.education
       - --log.level=warn
 
+
   alertmanager:
     build:
       context: ./alertmanager/
@@ -57,3 +58,19 @@ services:
     volumes:
       - ./grafana/datasources:/etc/grafana/provisioning/datasources
       - grafana-data:/var/lib/grafana
+
+  influxdb:
+    image: influxdb:latest
+    container_name: influxdb
+    ports:
+      - "8086:8086"
+    environment:
+      INFLUXDB_UDP_ENABLED: 'true'
+      INFLUXDB_HOSTNAME: influxdb
+      INFLUXDB_UDP_BIND_ADDRESS: 0.0.0.0:8089
+      INFLUXDB_UDP_DATABASE: prometheus
+  
+    volumes:
+      # Data persistency
+      # sudo mkdir -p /srv/docker/influxdb/data
+      - /srv/docker/influxdb/data:/var/lib/influxdb
