@@ -19,10 +19,9 @@ services:
       lan:
         ipv4_address: 192.168.10.20
     volumes:
-      - ./alert/:/config/
+      - ./alert/:/etc/alertmanager/
     ports:
       - 9093:9093
-    command: --config.file=/config/alertmanager.yml --log.level=debug
   grafa:
     image: "grafana/grafana-enterprise:latest"
     container_name: "grafa"
@@ -34,17 +33,6 @@ services:
       - ./grafa/grafana.ini:/etc/grafana/grafana.ini
     ports:
       - 3000:3000
-
-  influx:
-    image: "influxdb:latest"
-    container_name: "influx"
-    restart: always
-    networks:
-      lan:
-        ipv4_address: 192.168.10.40
-
-    ports:
-      - 8086:8086
 
   proxy:
     image: "nginx:latest"
@@ -62,7 +50,7 @@ services:
 
 networks:
   lan:
-    driver: bridge  # A terme "none"
+    driver: bridge
     ipam:
       config:
         - subnet: 192.168.10.0/24
