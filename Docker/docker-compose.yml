@@ -34,6 +34,23 @@ services:
     ports:
       - 3000:3000
 
+  linkeur:
+    image: ./prometheus-timestream-adapter/ 
+    container_name: "linkeur"
+    restart: always
+    networks:
+      lan:
+        ipv4_address: 192.168.10.40
+      port:
+        - 9201:9201
+    command:
+      - "--awsRegion us-west-2"
+      - "--databaseName prometheus"
+      - "--tableName prometheus-table"
+    environment:
+      - "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}"
+      - "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
+
   proxy:
     image: "nginx:latest"
     container_name: "proxy"
