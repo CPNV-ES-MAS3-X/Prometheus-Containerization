@@ -1,6 +1,6 @@
-## Install 
+## Install
 
-```
+```bash
 sudo apt update
 sudo apt upgrade -y
 sudo apt install curl wget apt-transport-https -y
@@ -36,7 +36,7 @@ minikube dashboard
 
 ## Test
 
-```
+```bash
 kubectl create deployment app1 --image nginx
 kubectl expose deployment app1 --name app1-svc --type NodePort --port 80
 kubectl get deployment app1
@@ -44,9 +44,20 @@ kubectl get svc app1-svc
 minikube service app1-svc --url
 ```
 
+## Proxy Settings
+
+```bash
+#Start a proxy using @Jeff's script, as default it will open a proxy on '0.0.0.0:8001'.
+kubectl proxy --address='0.0.0.0' --disable-filter=true
+
+
+#Visit the dashboard via the link below:
+curl http://your_api_server_ip:8001/api/v1/namespaces/kube-system/services/http:kubernetes-dashboard:/proxy/
+```
+
 ## Destroy
 
-```
+```bash
 minikube stop
 miniube start
 minikube restart
