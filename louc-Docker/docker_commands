@@ -1,0 +1,4 @@
+# delete all container
+docker rm `docker ps -qa`
+# delete all volumes
+docker volume rm $(docker volume ls -qf dangling="true")
