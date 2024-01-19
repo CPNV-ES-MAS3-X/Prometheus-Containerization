@@ -3,7 +3,7 @@ ADD config_files/prometheus.yml /etc/prometheus
 ADD config_files/rules.yml /etc/prometheus
 ADD config_files/web.yml /etc/prometheus
 # set environment variables
-ENV TZ=Asia/Kolkata
+ENV TZ=Eurpoe/Zurich
 
 # expose the Prometheus server port
 EXPOSE 9090
