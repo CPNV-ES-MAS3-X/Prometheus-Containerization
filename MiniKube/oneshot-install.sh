@@ -100,11 +100,12 @@ metadata:
 spec:
   selector:
     app: "prometheus"
-  type: ClusterIP
+  type: NodePort
   ports:
     - protocol: TCP
       port: 9090
       targetPort: 9090
+      nodePort: 31001
 EOF
 
 cd nginx
