@@ -1,7 +1,11 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: "alertmanager"
+  labels:
+    app: alertmanager
+  name: alertmanager
 spec:
   selector:
     matchLabels:
