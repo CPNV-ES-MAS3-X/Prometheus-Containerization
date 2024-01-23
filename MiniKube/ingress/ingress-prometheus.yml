@@ -2,24 +2,19 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: prometheus
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
     - host: mydomain.com
       http:
         paths:
-          - path: /
+          - path: /prometheus
             pathType: Prefix
             backend:
               service:
                 name: prometheus
                 port:
                   number: 9090
-    - host: mydomain-grafana.com
-      http:
-        paths:
-          - path: /
+          - path: /grafana
             pathType: Prefix
             backend:
               service:
