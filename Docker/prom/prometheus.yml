@@ -16,10 +16,10 @@ rule_files:
   - rules.yml
 
 remote_write:
-  - url: "http://influxdb:8086/api/v1/prom/write?db=prometheus"
+  - url: "http://influx:8086/api/v1/prom/write?db=prometheus"
 
 remote_read:
-  - url: "http://influxdb:8086/api/v1/prom/read?db=prometheus"
+  - url: "http://influx:8086/api/v1/prom/read?db=prometheus"
 
 # A scrape configuration containing exactly one endpoint to scrape:
 # Here it's Prometheus itself.
@@ -36,11 +36,16 @@ scrape_configs:
     static_configs:
       - targets: ["localhost:9100"]
 
-  - job_name: 'debian_host'
+  - job_name: "docker_client"
     static_configs:
-      - targets: ['10.20.0.50:9100']
+      - targets: ["docker_client:9100"]
         labels:
-          machinename: 'mas-lincli-01'
+          machinename: "docker_client"
+        #- job_name: 'debian_host'
+        #static_configs:
+        #- targets: ['10.20.0.50:9100']
+        #labels:
+        #  machinename: 'mas-lincli-01'
 
   - job_name: 'apache_service'
     static_configs:

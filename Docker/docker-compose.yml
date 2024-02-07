@@ -6,50 +6,34 @@ services:
     restart: always
     networks:
       lan:
-        ipv4_address: 192.168.10.10
     volumes:
       - ./prom/:/etc/prometheus/
     ports:
       - 9090:9090
+
   alert:
     image: "prom/alertmanager:latest"
     container_name: "alert"
     restart: always
     networks:
       lan:
-        ipv4_address: 192.168.10.20
     volumes:
       - ./alert/:/etc/alertmanager/
     ports:
       - 9093:9093
+
   grafa:
     image: "grafana/grafana-enterprise:latest"
     container_name: "grafa"
     restart: always
     networks:
       lan:
-        ipv4_address: 192.168.10.30
     volumes:
       - ./grafa/grafana.ini:/etc/grafana/grafana.ini
+      - ./grafa/prom.yml:/etc/grafana/provisioning/datasources/prom.yml
+      - 'grafana:/var/lib/grafana'
     ports:
       - 3000:3000
-
-  linkeur:
-    image: ./prometheus-timestream-adapter/ 
-    container_name: "linkeur"
-    restart: always
-    networks:
-      lan:
-        ipv4_address: 192.168.10.40
-      port:
-        - 9201:9201
-    command:
-      - "--awsRegion us-west-2"
-      - "--databaseName prometheus"
-      - "--tableName prometheus-table"
-    environment:
-      - "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}"
-      - "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
 
   proxy:
     image: "nginx:latest"
@@ -57,24 +41,43 @@ services:
     restart: always
     networks:
       lan:
-        ipv4_address: 192.168.10.50
       wan:
-        ipv4_address: 192.168.20.10
     volumes:
       - ./nginx/:/etc/nginx/conf.d/
     ports:
       - 8080:8080
 
+  influx:
+    image: "influxdb:1.8"
+    container_name: "influx"
+    restart: always
+    networks:
+      lan:
+    environment:
+      - INFLUXDB_DB=prometheus
+      - INFLUXDB_USER=prometheus
+      - INFLUXDB_ADMIN_ENABLED=true
+      - INFLUXDB_ADMIN_USER=admin
+      - INFLUXDB_ADMIN_PASSWORD=Pa$$w0rd
+    volumes:
+      - 'influxdb:/var/lib/influxdb'
+    ports:
+      - 8086:8086
+
+  client:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: "docker_client"
+    restart: always
+    networks:
+      lan:
+    ports:
+      - 9100:9100
+
+
 networks:
   lan:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 192.168.10.0/24
-          gateway: 192.168.10.1
   wan:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 192.168.20.0/24
-          gateway: 192.168.20.1
+
+volumes:
+  influxdb:
+  grafana:

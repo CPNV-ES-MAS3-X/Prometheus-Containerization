@@ -1,3 +1,0 @@
-- id: redeploy-apache
-  execute-command: "/etc/rerebooteur/redeploy-apache.sh"
-  command-working-directory: "/etc/rerebooteur/"
