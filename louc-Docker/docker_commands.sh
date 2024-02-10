@@ -1,18 +1,18 @@
 # Stop all containers
-docker stop `docker ps -qa`
+sudo docker stop `docker ps -qa`
 
 # Remove all containers
-docker rm `docker ps -qa`
+sudo docker rm `docker ps -qa`
 
 # Remove all images
-docker rmi -f `docker images -qa `
+sudo docker rmi -f `docker images -qa `
 
 # Remove all volumes
-docker volume rm $(docker volume ls -q)
-docker volume rm $(docker volume ls -qf dangling="true")
+sudo docker volume rm $(docker volume ls -q)
+sudo docker volume rm $(docker volume ls -qf dangling="true")
 
 # Remove all networks
-docker network rm `docker network ls -q`
+sudo docker network rm `docker network ls -q`
 
 # Your installation should now be all fresh and clean.
 
@@ -23,3 +23,11 @@ docker network rm `docker network ls -q`
 
 # The following command show only show the default networks:
 # docker network ls
+
+
+sudo docker stop `docker ps -qa`
+sudo docker rm `docker ps -qa`
+sudo docker rmi -f `docker images -qa `
+sudo docker volume rm $(docker volume ls -q)
+sudo docker volume rm $(docker volume ls -qf dangling="true")
+sudo docker network rm `docker network ls -q`
