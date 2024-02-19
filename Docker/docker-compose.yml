@@ -53,12 +53,8 @@ services:
     restart: always
     networks:
       lan:
-    environment:
-      - INFLUXDB_DB=prometheus
-      - INFLUXDB_USER=prometheus
-      - INFLUXDB_ADMIN_ENABLED=true
-      - INFLUXDB_ADMIN_USER=admin
-      - INFLUXDB_ADMIN_PASSWORD=Pa$$w0rd
+    env_file:
+      - .env
     volumes:
       - 'influxdb:/var/lib/influxdb'
     ports:
