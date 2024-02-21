@@ -1,4 +1,0 @@
-# Kubernetes
-- Namespaces
-- Volumes
-- Networks
