@@ -62,3 +62,7 @@ sudo kubeadm init --control-plane-endpoint=mas-masternode-01 --upload-certs
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+
+#after worker node joined cluser
+kubectl label node mas-workernode-01 node-role.kubernetes.io/worker=worker
