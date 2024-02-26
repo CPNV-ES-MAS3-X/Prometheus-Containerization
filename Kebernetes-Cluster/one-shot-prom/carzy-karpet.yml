@@ -61,7 +61,7 @@ spec:
         #  imagePullPolicy: Never
           args:
             - '--config.file=/etc/prometheus/prometheus.yml'
-#            - '--web.config.file=/etc/prometheus/web.yml'
+            - '--web.config.file=/etc/prometheus/web.yml'
             - '--web.external-url=http://mydomain.com:81/prometheus'
             - '--storage.tsdb.retention=12h'
             - '--storage.tsdb.path=/prometheus'
