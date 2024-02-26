@@ -2,6 +2,8 @@
 ```bash
 #reset cluster 
 sudo kubeadm reset --force
+sudo rm $HOME/.kube/config
+sudo rm -rf /etc/cni/net.d
 sudo kubeadm init --control-plane-endpoint=mas-masternode-01 --upload-certs --pod-network-cidr=10.244.0.0/16
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
