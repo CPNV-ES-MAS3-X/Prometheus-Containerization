@@ -190,7 +190,6 @@ spec:
       containers:
         - name: "influxdb"
           image: "influxdb:latest"
-          imagePullPolicy: Never
           ports:
             - name: http
               containerPort: 8086
