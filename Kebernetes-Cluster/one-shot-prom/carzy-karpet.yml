@@ -158,19 +158,6 @@ spec:
     requests:
       storage: 5Gi
 ---
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  labels:
-    app: influxdb
-  name: influxdb-pvc
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 5Gi
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -189,7 +176,7 @@ spec:
     spec:
       containers:
         - name: "influxdb"
-          image: "influxdb:latest"
+          image: "datchos/influxdb:v1"
           ports:
             - name: http
               containerPort: 8086
