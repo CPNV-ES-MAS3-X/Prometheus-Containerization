@@ -1,4 +1,14 @@
-sudo apt update
+# master node
+sudo hostnamectl set-hostname mas-masternode-01
+sudo echo '10.20.0.101 mas-workernode-01' | sudo tee -a /etc/hosts
+
+# worker node
+sudo hostnamectl set-hostname mas-workernode-01
+sudo echo '10.20.0.100 mas-masternode-01' | sudo tee -a /etc/hosts
+
+
+# each nodes
+sudo apt update -y
 sudo apt install docker.io -y
 sudo systemctl enable docker
 sudo systemctl start docker
@@ -32,36 +42,31 @@ sudo sysctl --system
 sudo tee /etc/default/kubelet <<EOF
 KUBELET_EXTRA_ARGS="--cgroup-driver=cgroupfs"
 EOF
-
 sudo systemctl daemon-reload && sudo systemctl restart kubelet
    
 sudo tee /etc/docker/daemon.json <<EOF
-   {
-      "exec-opts": ["native.cgroupdriver=systemd"],
-      "log-driver": "json-file",
-      "log-opts": {
-      "max-size": "100m"
-   },
-      "storage-driver": "overlay2"
-       }
+{
+"exec-opts": ["native.cgroupdriver=systemd"],
+"log-driver": "json-file",
+"log-opts": {"max-size": "100m"},
+"storage-driver": "overlay2"
+}
 EOF
+sudo systemctl daemon-reload && sudo systemctl restart docker
 
 # master nodes
 
-sudo systemctl daemon-reload && sudo systemctl restart docker
-
 sudo sed -i  '/\[Service\]/a Environment=\"KUBELET_EXTRA_ARGS=--fail-swap-on=false\"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-
 sudo systemctl daemon-reload && sudo systemctl restart kubelet
 
-# sudo kubeadm init --control-plane-endpoint=mas-masternode-01 --upload-certs --pod-network-cidr=10.244.0.0/16
-sudo kubeadm init --control-plane-endpoint=mas-masternode-01 --pod-network-cidr=10.244.0.0/16
-
+sudo kubeadm init --control-plane-endpoint=mas-masternode-01 --upload-certs --pod-network-cidr=10.244.0.0/16
+#sudo kubeadm init --control-plane-endpoint=mas-masternode-01 --pod-network-cidr=10.244.0.0/16
 
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 
+#------------------------------#
 #after worker node joined cluser
 kubectl label node mas-workernode-01 node-role.kubernetes.io/worker=worker
