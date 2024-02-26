@@ -1,15 +1,26 @@
 ## Cluster 
 ```bash
 #reset cluster 
+
+## Master Node
 sudo kubeadm reset --force
 sudo rm $HOME/.kube/config
 sudo rm -rf /etc/cni/net.d
-sudo kubeadm init --control-plane-endpoint=mas-masternode-01 --upload-certs --pod-network-cidr=10.244.0.0/16
+sudo kubeadm init --control-plane-endpoint=mas-masternode-01 --pod-network-cidr=10.244.0.0/16
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 sudo systemctl daemon-reload && sudo systemctl restart kubelet
 kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
+sudo systemctl restart containerd
+
+
+## Worker Node
+sudo kubeadm reset --force
+sudo rm $HOME/.kube/config
+sudo rm -rf /etc/cni/net.d
+sudo systemctl restart containerd
+#sudo kubeadm join...
 
 ```
 ## Pods
