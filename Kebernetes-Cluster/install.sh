@@ -54,7 +54,9 @@ sudo sed -i  '/\[Service\]/a Environment=\"KUBELET_EXTRA_ARGS=--fail-swap-on=fal
 
 sudo systemctl daemon-reload && sudo systemctl restart kubelet
 
-sudo kubeadm init --control-plane-endpoint=mas-masternode-01 --upload-certs --pod-network-cidr=10.244.0.0/16
+# sudo kubeadm init --control-plane-endpoint=mas-masternode-01 --upload-certs --pod-network-cidr=10.244.0.0/16
+sudo kubeadm init --control-plane-endpoint=mas-masternode-01 --pod-network-cidr=10.244.0.0/16
+
 
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
