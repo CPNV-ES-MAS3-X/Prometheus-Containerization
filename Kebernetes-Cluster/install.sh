@@ -29,8 +29,6 @@ EOF
 
 sudo sysctl --system
 
-# master nodes
-
 sudo tee /etc/default/kubelet <<EOF
 KUBELET_EXTRA_ARGS="--cgroup-driver=cgroupfs"
 EOF
@@ -47,6 +45,8 @@ sudo tee /etc/docker/daemon.json <<EOF
       "storage-driver": "overlay2"
        }
 EOF
+
+# master nodes
 
 sudo systemctl daemon-reload && sudo systemctl restart docker
 
