@@ -59,14 +59,20 @@ sudo systemctl daemon-reload && sudo systemctl restart docker
 sudo sed -i  '/\[Service\]/a Environment=\"KUBELET_EXTRA_ARGS=--fail-swap-on=false\"' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
 sudo systemctl daemon-reload && sudo systemctl restart kubelet
 
-sudo kubeadm init --control-plane-endpoint=mas-masternode-01 --upload-certs --pod-network-cidr=10.244.0.0/16
-#sudo kubeadm init --control-plane-endpoint=mas-masternode-01 --pod-network-cidr=10.244.0.0/16
+#sudo kubeadm init --control-plane-endpoint=mas-masternode-01 --upload-certs --pod-network-cidr=10.244.0.0/16
+sudo kubeadm init --control-plane-endpoint=mas-masternode-01 --pod-network-cidr=10.244.0.0/16
 
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 
+## helm 
+helm upgrade --install ingress-nginx ingress-nginx \
+  --repo https://kubernetes.github.io/ingress-nginx \
+  --namespace ingress-nginx --create-namespace\
+  --set controller.service.loadBalancerIP=10.20.0.101
+  
 #------------------------------#
 #after worker node joined cluser
 kubectl label node mas-workernode-01 node-role.kubernetes.io/worker=worker
