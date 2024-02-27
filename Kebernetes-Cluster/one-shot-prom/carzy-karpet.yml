@@ -90,6 +90,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: grafana-pvc
 spec:
+  storageClassName: local-path
   accessModes:
     - ReadWriteOnce
   resources:
@@ -114,6 +115,7 @@ spec:
       containers:
         - name: "grafana"
           image: "datchos/grafana:v1"
+          imagePullPolicy: Never
           ports:
             - containerPort: 3000
               name: grafana
@@ -140,10 +142,7 @@ spec:
   sessionAffinity: None
   type: LoadBalancer
 
-
-
 # InfluxDB
-
 ---
 apiVersion: v1
 kind: PersistentVolume
