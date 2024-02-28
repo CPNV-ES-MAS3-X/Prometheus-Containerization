@@ -1,23 +1,29 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: prometheus-server-conf
+  name: prometheus-conf
   labels:
-    name: prometheus-server-conf
+    name: prometheus-conf
 data:
-  prometheus.yml: |- 
+  prometheus.yml: |-
     global:
       scrape_interval: 15s 
-      evaluation_interval: 15s
+      evaluation_interval: 15s 
 
     alerting:
       alertmanagers:
         - static_configs:
             - targets:
-              - alertmanager:9093
+              - 192.168.10.20:9093
 
     rule_files:
       - rules.yml
+
+    remote_write:
+      - url: "http://influx:8086/api/v1/prom/write?db=prometheus"
+
+    remote_read:
+      - url: "http://influx:8086/api/v1/prom/read?db=prometheus"
 
     scrape_configs:
       - job_name: "prometheus"
@@ -31,11 +37,11 @@ data:
         static_configs:
           - targets: ["localhost:9100"]
 
-      - job_name: 'debian_host'
+      - job_name: "docker_client"
         static_configs:
-          - targets: ['10.20.0.50:9100']
+          - targets: ["docker_client:9100"]
             labels:
-              machinename: 'mas-lincli-01'
+              machinename: "docker_client"
 
       - job_name: 'apache_service'
         static_configs:
@@ -49,13 +55,17 @@ data:
           - targets: ['10.20.0.51:9182']
             labels:
               machineename: 'mas-wincli-01'
+
+  web.yml: |-
+    basic_auth_users:
+      admin: $2b$12$/d7g5cfVRhF7WfhPty6tP.i/M8GiAaOAurVxoaWQYJ.S8V9p82TIG
+
   rules.yml: |-
     groups:
       - name: Debian_Cli
         rules:
           - alert: DebianCpuUsageOver50%
             expr: 100 - (avg(irate(node_cpu_seconds_total{mode="idle"}[30m])) * 100) > 50
-    #        for: 1m
             labels:
               severity: warning
               machine_name: "[{{$labels.machinename}}]"
@@ -68,7 +78,6 @@ data:
 
           - alert: DebianCpuUsageOver80%
             expr: 100 - (avg(irate(node_cpu_seconds_total{mode="idle"}[30m])) * 100) > 80
-    #        for: 1m
             labels:
               severity: critical
               machine_name: "[{{$labels.machinename}}]"
@@ -217,24 +226,11 @@ data:
               summary: "Instance [{{ $labels.instance }}] has more than 80% of disk space"
               description: "[{{ $labels.instance }}] - Disk Usage : {{ $value }}%."
 
-    #  - name: Windows_Host_Down
-    #    rules:
-    #      - alert: InstanceDown
-    #        expr: up * on(instance) group_left(hostname) windows_cs_hostname == 0
-    #        for: 1m
-    #        labels:
-    #          severity: critical
-    #        annotations:
-    #          summary: "Instance [{{ $labels.instance }}] down"
-    #          description: "[{{ $labels.job }}] has been down for more than 1 minute."
-
-
 
       - name: Debian_Host_Down
         rules:
           - alert: InstanceDown
             expr: absent((up{instance="10.20.0.50:9100", job="debian_host", machinename="mas-lincli-01"}) == 1)
-    #        for: 1m
             labels:
               severity: critical
               machine_name: "[{{$labels.machinename}}]"
@@ -249,7 +245,6 @@ data:
         rules:
           - alert: InstanceDown
             expr: absent((up{instance="10.20.0.51:9182", job="windows_host", machineename="mas-wincli-01"}) == 1)
-    #        for: 1m
             labels:
               severity: critical
               machine_name: "[{{$labels.machinename}}]"
@@ -260,7 +255,7 @@ data:
               description: "[{{$labels.machinename}}] has been down for more than 1 minute."
 
 
-      - name: Debian_Apache_Service_Down_2
+      - name: Debian_Apache_Service_Down
         rules:
           - alert: DebianServiceDown
             expr: apache_up == 0
@@ -278,7 +273,6 @@ data:
         rules:
           - alert: WindowsServiceDown
             expr: absent((windows_service_info{instance="10.20.0.51:9182", job="windows_host", machineename="mas-wincli-01", name="w32time"})) == 1
-    #        for: 1m
             labels:
               severity: critical
               machine_name: "[{{$labels.machinename}}]"
@@ -287,10 +281,6 @@ data:
             annotations:
               summary: "Instance [{{ $labels.instance }}] down"
               description: "[{{ $labels.machinename }}] has been down for more than 1 minute."
-  web.yml: |-
-    basic_auth_users:
-      admin: $2b$12$k3URWRpOoUv4NGnXGARxP.gvjS33EkV4hj3wXW3V0XIHGmtq.Coyy
-
 
 
 
