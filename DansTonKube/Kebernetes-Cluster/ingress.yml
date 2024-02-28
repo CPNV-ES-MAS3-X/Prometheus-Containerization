@@ -21,3 +21,6 @@ spec:
                 name: grafana
                 port:
                   number: 3000
+
+#  annotations:
+#    nginx.ingress.kubernetes.io/rewrite-target: /$1
