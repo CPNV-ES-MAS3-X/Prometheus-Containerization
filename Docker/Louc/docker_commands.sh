@@ -31,3 +31,11 @@ sudo docker rmi -f `docker images -qa `
 sudo docker volume rm $(docker volume ls -q)
 sudo docker volume rm $(docker volume ls -qf dangling="true")
 sudo docker network rm `docker network ls -q`
+
+
+
+
+#tag and push 
+docker build --no-cache -t grafana .
+docker tag grafana:latest datchos/grafana:v1
+docker push datchos/grafana:v1
