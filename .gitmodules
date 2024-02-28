@@ -1,3 +1,0 @@
-[submodule "Docker/Docker/prometheus-timestream-adapter"]
-	path = Docker/Docker/prometheus-timestream-adapter
-	url = https://github.com/dpattmann/prometheus-timestream-adapter.git
