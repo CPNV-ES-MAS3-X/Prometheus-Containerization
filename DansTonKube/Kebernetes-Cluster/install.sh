@@ -66,6 +66,12 @@ mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
+#------------------------------#
+# after worker node joined cluser
+kubectl label node mas-workernode-01 node-role.kubernetes.io/worker=worker
+
+
+# Cluster settings
 kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
 kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
 
@@ -81,7 +87,15 @@ helm upgrade --install ingress-nginx ingress-nginx \
   --repo https://kubernetes.github.io/ingress-nginx \
   --namespace ingress-nginx --create-namespace \
   --set controller.service.loadBalancerIP=10.20.0.101
-  
-#------------------------------#
-#after worker node joined cluser
-kubectl label node mas-workernode-01 node-role.kubernetes.io/worker=worker
+
+
+# Network settings 
+sudo bash -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
+sudo bash -c "iptables -t nat -A PREROUTING -p tcp --dport 8080 -j DNAT --to-destination 127.0.0.1"
+sudo bash -c "iptables -A FORWARD -p tcp -d 127.0.0.1 --dport 80 -j ACCEPT"
+
+# port porward
+kubectl port-forward --namespace=ingress-nginx service/ingress-nginx-controller 8080:80
+
+# test ingress 
+curl --resolve prometheus.cld.education:8080:10.20.0.100 http://prometheus.cld.education:8080/prometheus
