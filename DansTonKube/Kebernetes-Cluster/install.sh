@@ -1,11 +1,12 @@
 # master node
 sudo hostnamectl set-hostname mas-masternode-01
 sudo echo '10.20.0.101 mas-workernode-01' | sudo tee -a /etc/hosts
+sudo reboot
 
 # worker node
 sudo hostnamectl set-hostname mas-workernode-01
 sudo echo '10.20.0.100 mas-masternode-01' | sudo tee -a /etc/hosts
-
+sudo reboot
 
 # each nodes
 sudo apt update -y
@@ -13,9 +14,16 @@ sudo apt install docker.io -y
 sudo systemctl enable docker
 sudo systemctl start docker
 
-curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes.gpg
-echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/kubernetes.gpg] http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list
-sudo apt update
+#curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes.gpg
+#echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/kubernetes.gpg] http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list
+#sudo apt update
+
+sudo apt-get update
+# apt-transport-https may be a dummy package; if so, you can skip that package
+sudo apt-get install -y apt-transport-https ca-certificates curl
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+sudo apt-get update
 
 sudo apt install kubeadm kubelet kubectl
 sudo apt-mark hold kubeadm kubelet kubectl
