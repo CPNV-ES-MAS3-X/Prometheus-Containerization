@@ -96,6 +96,9 @@ helm upgrade --install ingress-nginx ingress-nginx \
   --namespace ingress-nginx --create-namespace \
   --set controller.service.loadBalancerIP=10.20.0.101
 
+# get crazy-karpet
+kubectl apply -f https://raw.githubusercontent.com/CPNV-ES-MAS3-X/Prometheus-Containerization/main/DansTonKube/Kebernetes-Cluster/one-shot-prom/carzy-karpet.yml
+kubectl apply -f https://raw.githubusercontent.com/CPNV-ES-MAS3-X/Prometheus-Containerization/main/DansTonKube/Kebernetes-Cluster/ingress.yml
 
 # Network settings 
 sudo bash -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
@@ -106,4 +109,4 @@ sudo bash -c "iptables -A FORWARD -p tcp -d 127.0.0.1 --dport 80 -j ACCEPT"
 kubectl port-forward --namespace=ingress-nginx service/ingress-nginx-controller 8080:80
 
 # test ingress 
-curl --resolve prometheus.cld.education:8080:10.20.0.100 http://prometheus.cld.education:8080/prometheus
+curl --resolve demo.localdev.me:8080:10.20.0.100 http://demo.localdev.me:8080/prometheus
