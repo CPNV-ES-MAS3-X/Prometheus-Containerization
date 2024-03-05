@@ -90,9 +90,9 @@ kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/
 kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
 # kubectl apply -f https://github.com/coreos/flannel/raw/master/Documentation/kube-flannel.yml
 
-sudo tee /run/flannel/subnet.env <<EOF
+cat <<EOF | tee /run/flannel/subnet.env
 FLANNEL_NETWORK=10.244.0.0/16
-FLANNEL_SUBNET=10.244.0.1/24
+FLANNEL_SUBNET=10.244.0.0/16
 FLANNEL_MTU=1450
 FLANNEL_IPMASQ=true
 EOF
