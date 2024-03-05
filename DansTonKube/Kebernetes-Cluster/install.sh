@@ -64,6 +64,10 @@ sudo systemctl daemon-reload && sudo systemctl restart docker
 
 # master nodes
 
+sudo mkdir -p /opt/cni/bin
+wget https://github.com/containernetworking/plugins/releases/download/v1.4.0/cni-plugins-linux-amd64-v1.4.0.tgz
+sudo tar Cxzvf /opt/cni/bin cni-plugins-linux-amd64-v1.4.0.tgz
+
 sudo sed -i  '/\[Service\]/a Environment=\"KUBELET_EXTRA_ARGS=--fail-swap-on=false\"' /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf
 sudo systemctl daemon-reload && sudo systemctl restart kubelet
 
