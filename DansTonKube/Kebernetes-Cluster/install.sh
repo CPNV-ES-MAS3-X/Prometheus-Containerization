@@ -90,19 +90,19 @@ kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/
 kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
 # kubectl apply -f https://github.com/coreos/flannel/raw/master/Documentation/kube-flannel.yml
 
-cat <<EOF | tee /run/flannel/subnet.env
-FLANNEL_NETWORK=10.244.0.0/16
-FLANNEL_SUBNET=10.244.0.0/16
-FLANNEL_MTU=1450
-FLANNEL_IPMASQ=true
-EOF
-
 ## helm 
 curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
 sudo apt-get install apt-transport-https --yes
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
 sudo apt-get update
 sudo apt-get install helm
+
+sudo tee /run/flannel/subnet.env << EOF
+FLANNEL_NETWORK=10.244.0.0/16
+FLANNEL_SUBNET=10.244.0.0/16
+FLANNEL_MTU=1450
+FLANNEL_IPMASQ=true
+EOF
 
 # deploy ingress controller
 helm upgrade --install ingress-nginx ingress-nginx \
