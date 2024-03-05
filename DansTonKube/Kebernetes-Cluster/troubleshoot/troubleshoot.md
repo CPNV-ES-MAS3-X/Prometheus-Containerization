@@ -23,6 +23,12 @@ sudo systemctl restart containerd
 #sudo kubeadm join...
 
 ```
+## ingress
+```bash
+kubectl get validatingwebhookconfigurations 
+kubectl delete validatingwebhookconfigurations ingress-nginx-admission
+```
+
 ## Pods
 ```bash
 
