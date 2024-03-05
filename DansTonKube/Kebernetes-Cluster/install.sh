@@ -70,12 +70,6 @@ sudo systemctl daemon-reload && sudo systemctl restart kubelet
 #sudo kubeadm init --control-plane-endpoint=mas-masternode-01 --upload-certs --pod-network-cidr=10.244.0.0/16
 sudo kubeadm init --control-plane-endpoint=mas-masternode-01 --pod-network-cidr=10.244.0.0/16
 
-sudo tee /run/flannel/subnet.env <<EOF
-FLANNEL_NETWORK=10.244.0.0/16
-FLANNEL_SUBNET=10.244.0.1/24
-FLANNEL_MTU=1450
-FLANNEL_IPMASQ=true
-EOF
 
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
@@ -91,6 +85,13 @@ kubectl label node mas-workernode-01 node-role.kubernetes.io/worker=worker
 kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
 kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
 # kubectl apply -f https://github.com/coreos/flannel/raw/master/Documentation/kube-flannel.yml
+
+sudo tee /run/flannel/subnet.env <<EOF
+FLANNEL_NETWORK=10.244.0.0/16
+FLANNEL_SUBNET=10.244.0.1/24
+FLANNEL_MTU=1450
+FLANNEL_IPMASQ=true
+EOF
 
 ## helm 
 curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
