@@ -70,9 +70,17 @@ sudo systemctl daemon-reload && sudo systemctl restart kubelet
 #sudo kubeadm init --control-plane-endpoint=mas-masternode-01 --upload-certs --pod-network-cidr=10.244.0.0/16
 sudo kubeadm init --control-plane-endpoint=mas-masternode-01 --pod-network-cidr=10.244.0.0/16
 
+sudo tee /run/flannel/subnet.env <<EOF
+FLANNEL_NETWORK=10.244.0.0/16
+FLANNEL_SUBNET=10.244.0.1/24
+FLANNEL_MTU=1450
+FLANNEL_IPMASQ=true
+EOF
+
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
 
 #------------------------------#
 # after worker node joined cluser
@@ -97,13 +105,6 @@ helm upgrade --install ingress-nginx ingress-nginx \
   --namespace ingress-nginx --create-namespace \
   --set controller.service.loadBalancerIP=10.20.0.101
 
-
-sudo tee /run/flannel/subnet.env <<EOF
-FLANNEL_NETWORK=10.244.0.0/16
-FLANNEL_SUBNET=10.244.0.1/24
-FLANNEL_MTU=1450
-FLANNEL_IPMASQ=true
-EOF
 
 # get crazy-karpet
 kubectl apply -f https://raw.githubusercontent.com/CPNV-ES-MAS3-X/Prometheus-Containerization/main/DansTonKube/Kebernetes-Cluster/one-shot-prom/carzy-karpet.yml
