@@ -63,7 +63,7 @@ sudo sysctl --system
 # master node   #
 #---------------#
 # init Cluster
-sudo kubeadm init --control-plane-endpoint=mas-masternode-01 --pod-network-cidr=10.244.0.0/16
+sudo kubeadm init --pod-network-cidr=10.244.0.0/16
 
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
@@ -75,12 +75,6 @@ kubectl label node mas-workernode-01 node-role.kubernetes.io/worker=worker
 
 # Cluster settings
 # flannel
-sudo tee /run/flannel/subnet.env << EOF
-FLANNEL_NETWORK=10.244.0.0/16
-FLANNEL_SUBNET=10.244.0.0/16
-FLANNEL_MTU=1450
-FLANNEL_IPMASQ=true
-EOF
 kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
 
 # cni plugin
