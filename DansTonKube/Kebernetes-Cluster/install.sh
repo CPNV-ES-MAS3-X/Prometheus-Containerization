@@ -1,9 +1,9 @@
-# master node
+# master node hostname and hostfile
 sudo hostnamectl set-hostname mas-masternode-01
 sudo echo '10.20.0.101 mas-workernode-01' | sudo tee -a /etc/hosts
 sudo reboot
 
-# worker node
+# worker node hostname and hostfile
 sudo hostnamectl set-hostname mas-workernode-01
 sudo echo '10.20.0.100 mas-masternode-01' | sudo tee -a /etc/hosts
 sudo reboot
@@ -74,18 +74,24 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 kubectl label node mas-workernode-01 node-role.kubernetes.io/worker=worker
 
 # Cluster settings
-
+# flannel
 sudo tee /run/flannel/subnet.env << EOF
 FLANNEL_NETWORK=10.244.0.0/16
 FLANNEL_SUBNET=10.244.0.0/16
 FLANNEL_MTU=1450
 FLANNEL_IPMASQ=true
 EOF
-
 kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
+
+# cni plugin
+sudo mkdir -p /opt/cni/bin
+curl -O -L https://github.com/containernetworking/plugins/releases/download/v1.2.0/cni-plugins-linux-amd64-v1.2.0.tgz
+sudo  tar -C /opt/cni/bin -xzf cni-plugins-linux-amd64-v1.2.0.tgz
+
+# storage
 kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
 
-## helm install
+# helm install
 curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
 sudo apt-get install apt-transport-https --yes
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
