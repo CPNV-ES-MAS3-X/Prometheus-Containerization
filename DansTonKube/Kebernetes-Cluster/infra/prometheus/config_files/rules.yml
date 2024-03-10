@@ -3,7 +3,6 @@ groups:
     rules:
       - alert: DebianCpuUsageOver50%
         expr: 100 - (avg(irate(node_cpu_seconds_total{mode="idle"}[30m])) * 100) > 50
-#        for: 1m
         labels:
           severity: warning
           machine_name: "[{{$labels.machinename}}]"
@@ -13,10 +12,8 @@ groups:
           summary: "Instance [{{ $labels.instance }}]  > 50% CPU load"
           description: " CPU load : {{ $value }}%"
 
-
       - alert: DebianCpuUsageOver80%
         expr: 100 - (avg(irate(node_cpu_seconds_total{mode="idle"}[30m])) * 100) > 80
-#        for: 1m
         labels:
           severity: critical
           machine_name: "[{{$labels.machinename}}]"
@@ -25,7 +22,6 @@ groups:
         annotations:
           summary: "Instance [{{ $labels.instance }}]  > 80% CPU load"
           description: "CPU load : {{ $value }}% or less free"
-
 
       - alert: MemoryUsageOver50%
         expr: 100-((node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100) >= 50
@@ -39,7 +35,6 @@ groups:
           summary: "Instance [{{ $labels.instance }}] is using more than 50% of memory"
           description: "[{{ $labels.instance }}] - Use {{ $value }}% of Memory."
 
-
       - alert: MemoryUsageOver80%
         expr: 100-((node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100) >= 80
         for: 1m
@@ -48,11 +43,9 @@ groups:
           machine_name: "[{{$labels.machinename}}]"
           error_code: "code_x04"
           description_client: "Utilisation Memoire trop élevé"
-
         annotations:
           summary: "Instance [{{ $labels.instance }}] is using more than 80% of memory"
           description: "[{{ $labels.instance }}] - Use {{ $value }}% of Memory."
-
 
       - alert: DiskUsageOver50%
         expr: 100-((node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) * 100) >= 50
@@ -62,11 +55,9 @@ groups:
           machine_name: "[{{$labels.machinename}}]"
           error_code: "code_x05"
           description_client: "Utilisation Disque trop élevé"
-
         annotations:
           summary: "Instance [{{ $labels.instance }}] is using 50% of storage "
           description: "[{{ $labels.instance }}] - Use {{ $value }}% of Memory."
-
 
       - alert: DiskUsageOver80%
         expr: 100-((node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) * 100) >= 80
@@ -76,11 +67,9 @@ groups:
           machine_name: "[{{$labels.machinename}}]"
           error_code: "code_x06"
           description_client: "Utilisation Disque trop élevé"
-
         annotations:
           summary: "Instance [{{ $labels.instance }}] is using 50% or more of storage "
           description: "[{{ $labels.instance }}] - Disk Usage : {{ $value }}% ."
-
 
   - name: Windows_Cli
     rules:
@@ -92,7 +81,6 @@ groups:
           machine_name: "[{{$labels.machinename}}]"
           error_code: "code_x07"
           description_client: "Utilisation CPU trop élevé"
-
         annotations:
           summary: "Instance [{{ $labels.instance }}]  > 50% CPU load"
           description: " CPU load : {{ $value }}%"
@@ -105,11 +93,9 @@ groups:
           machine_name: "[{{$labels.machinename}}]"
           error_code: "code_x08"
           description_client: "Utilisation CPU trop élevé"
-
         annotations:
           summary: "Instance [{{ $labels.instance }}]  > 50% CPU load"
           description: " CPU load : {{ $value }}%"
-
 
       - alert: MemoryUsageOver50%
         expr: 100.0-(100*(windows_os_physical_memory_free_bytes / windows_cs_physical_memory_bytes)) >=50
@@ -119,11 +105,9 @@ groups:
           machine_name: "[{{$labels.machinename}}]"
           error_code: "code_x09"
           description_client: "Utilisation Memoire trop élevé"
-
         annotations:
           summary: "Instance [{{ $labels.instance }}] is using more than 50% of memory"
           description: "[{{ $labels.instance }}] - Use {{ $value }}% of Memory."
-
 
       - alert: MemoryUsageOver80%
         expr: 100.0-(100*(windows_os_physical_memory_free_bytes / windows_cs_physical_memory_bytes)) >=80
@@ -133,11 +117,9 @@ groups:
           machine_name: "[{{$labels.machinename}}]"
           error_code: "code_x10"
           description_client: "Utilisation Memoire trop élevé"
-
         annotations:
           summary: "Instance [{{ $labels.instance }}] is using more than 80% of memory"
           description: "[{{ $labels.instance }}] - Use {{ $value }}% of Memory."
-
 
       - alert: C-DiskSpaceUsageMoreThan50Percent
         expr: 100.0-(100*(windows_logical_disk_free_bytes{volume="C:"} / windows_logical_disk_size_bytes{volume="C:"})) >= 50
@@ -147,7 +129,6 @@ groups:
           machine_name: "[{{$labels.machinename}}]"
           error_code: "code_x11"
           description_client: "Utilisation Disque trop élevé"
-
         annotations:
           summary: "Instance [{{ $labels.instance }}] has more than 50% of disk space"
           description: "[{{ $labels.instance }}] - Disk Usage : {{ $value }}%."
@@ -160,29 +141,14 @@ groups:
           machine_name: "[{{$labels.machinename}}]"
           error_code: "code_x12"
           description_client: "Utilisation Disque trop élevé"
-
         annotations:
           summary: "Instance [{{ $labels.instance }}] has more than 80% of disk space"
           description: "[{{ $labels.instance }}] - Disk Usage : {{ $value }}%."
-
-#  - name: Windows_Host_Down
-#    rules:
-#      - alert: InstanceDown
-#        expr: up * on(instance) group_left(hostname) windows_cs_hostname == 0
-#        for: 1m
-#        labels:
-#          severity: critical
-#        annotations:
-#          summary: "Instance [{{ $labels.instance }}] down"
-#          description: "[{{ $labels.job }}] has been down for more than 1 minute."
-
-
 
   - name: Debian_Host_Down
     rules:
       - alert: InstanceDown
         expr: absent((up{instance="10.20.0.50:9100", job="debian_host", machinename="mas-lincli-01"}) == 1)
-#        for: 1m
         labels:
           severity: critical
           machine_name: "[{{$labels.machinename}}]"
@@ -192,12 +158,10 @@ groups:
           summary: "Instance [{{ $labels.instance }}] down, Hostname : [{{$labels.machinename}}]"
           description: "[{{$labels.machinename}}] has been down for more than 1 minute."
 
-
   - name: Windows_Host_Down
     rules:
       - alert: InstanceDown
-        expr: absent((up{instance="10.20.0.51:9182", job="windows_host", machineename="mas-wincli-01"}) == 1)
-#        for: 1m
+        expr: absent((up{instance="10.20.0.51:9182", job="windows_host", machinename="mas-wincli-01"}) == 1)
         labels:
           severity: critical
           machine_name: "[{{$labels.machinename}}]"
@@ -206,7 +170,6 @@ groups:
         annotations:
           summary: "Instance [{{ $labels.instance }}] down, Hostname : [{{$labels.machinename}}]"
           description: "[{{$labels.machinename}}] has been down for more than 1 minute."
-
 
   - name: Debian_Apache_Service_Down_2
     rules:
@@ -225,8 +188,7 @@ groups:
   - name: Windows_Time_Service_Down
     rules:
       - alert: WindowsServiceDown
-        expr: absent((windows_service_info{instance="10.20.0.51:9182", job="windows_host", machineename="mas-wincli-01", name="w32time"})) == 1
-#        for: 1m
+        expr: absent((windows_service_info{instance="10.20.0.51:9182", job="windows_host", machinename="mas-wincli-01", name="w32time"})) == 1
         labels:
           severity: critical
           machine_name: "[{{$labels.machinename}}]"

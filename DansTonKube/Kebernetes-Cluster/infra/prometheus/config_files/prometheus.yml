@@ -50,7 +50,7 @@ scrape_configs:
     static_configs:
       - targets: ['10.20.0.51:9182']
         labels:
-          machineename: 'mas-wincli-01'
+          machinename: 'mas-wincli-01'
 
 
 
