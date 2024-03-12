@@ -62,7 +62,7 @@ spec:
           args:
             - '--config.file=/etc/prometheus/prometheus.yml'
             - '--web.config.file=/etc/prometheus/web.yml'
-            - '--web.external-url=https://prometheus.cld.education'
+            - '--web.external-url=https://prometheus.cld.education/prometheus'
             - '--storage.tsdb.retention=12h'
             - '--storage.tsdb.path=/prometheus'
           ports:
