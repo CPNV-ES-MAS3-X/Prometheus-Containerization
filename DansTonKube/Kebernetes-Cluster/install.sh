@@ -97,9 +97,10 @@ helm upgrade --install ingress-nginx ingress-nginx \
   --repo https://kubernetes.github.io/ingress-nginx \
   --namespace ingress-nginx --create-namespace
 
-# get crazy-karpet
-kubectl apply -f https://raw.githubusercontent.com/CPNV-ES-MAS3-X/Prometheus-Containerization/main/DansTonKube/Kebernetes-Cluster/one-shot-prom/carzy-karpet.yml
-kubectl apply -f https://raw.githubusercontent.com/CPNV-ES-MAS3-X/Prometheus-Containerization/main/DansTonKube/Kebernetes-Cluster/ingress.yml
+# get crazy-karpet Change dev by prod if you need
+kubectl apply -f https://raw.githubusercontent.com/CPNV-ES-MAS3-X/Prometheus-Containerization/main/DansTonKube/Kebernetes-Cluster/one-shot-prom/carzy-karpet-dev.yml
+kubectl apply -f https://raw.githubusercontent.com/CPNV-ES-MAS3-X/Prometheus-Containerization/main/DansTonKube/Kebernetes-Cluster/ingress/ingress-dev.yml
+
 
 # Network settings 
 sudo bash -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
