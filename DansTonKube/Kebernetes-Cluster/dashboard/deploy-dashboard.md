@@ -16,3 +16,6 @@ sudo bash -c "iptables -t nat -A PREROUTING -p tcp --dport 8443 -j DNAT --to-des
 
 # kube port forwarding
 kubectl -n kubernetes-dashboard port-forward svc/kubernetes-dashboard-kong-proxy 8443:443
+
+# Create a Admin User
+https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md
