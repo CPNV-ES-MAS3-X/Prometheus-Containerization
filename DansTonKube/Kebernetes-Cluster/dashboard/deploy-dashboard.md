@@ -25,6 +25,9 @@ https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/cre
 kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.7.0/components.yaml
 
 ## change config
+https://github.com/kubernetes-sigs/metrics-server/issues/812
+
+
 kubectl edit deploy metrics-server -n kube-system
 
 
