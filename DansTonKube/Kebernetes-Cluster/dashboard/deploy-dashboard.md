@@ -19,3 +19,23 @@ kubectl -n kubernetes-dashboard port-forward svc/kubernetes-dashboard-kong-proxy
 
 # Create a Admin User
 https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md
+
+
+# Install metric-server
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.7.0/components.yaml
+
+## change config
+kubectl edit deploy metrics-server -n kube-system
+
+
+Add
+
+- --kubelet-insecure-tls
+```
+      containers:
+      - args:
+        - --cert-dir=/tmp
+        - --secure-port=8448
+        - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+        - --kubelet-insecure-tls
+```
