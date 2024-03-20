@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: load-generator
+  name: load-generator
+spec:
+  replicas: 10 # Changer le nombre de réplicas à 10
+  selector:
+    matchLabels:
+      app: load-generator
+  template:
+    metadata:
+      labels:
+        app: load-generator
+    spec:
+      containers:
+      - image: busybox:1.28
+        name: load-generator
+        command: ["/bin/sh", "-c"]
+        args:
+        - while true; do wget -q -O- http://prometheus:9090; done
