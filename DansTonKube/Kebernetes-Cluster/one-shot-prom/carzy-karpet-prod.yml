@@ -57,17 +57,22 @@ spec:
     spec:
       containers:
         - name: "prometheus"
-          image: "datchos/prometheus:prod"
+          image: "datchos/prometheus:v1"
           imagePullPolicy: Always
           args:
             - '--config.file=/etc/prometheus/prometheus.yml'
             - '--web.config.file=/etc/prometheus/web.yml'
-            - '--web.external-url=https://prometheus.cld.education/prometheus'
+            - '--web.external-url=http://demo.localdev.me:8080/prometheus'
             - '--storage.tsdb.retention=12h'
             - '--storage.tsdb.path=/prometheus'
           ports:
             - name: http
               containerPort: 9090
+          resources:
+           limits:
+             cpu: 500m
+           requests:
+             cpu: 200m
 ---
 apiVersion: v1
 kind: Service
@@ -82,6 +87,19 @@ spec:
       port: 9090
       targetPort: 9090
       nodePort: 31001
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+ name: "prometheus"
+spec:
+ scaleTargetRef:
+   apiVersion: apps/v1
+   kind: Deployment
+   name: "prometheus"
+ minReplicas: 1
+ maxReplicas: 10
+ targetCPUUtilizationPercentage: 50
 
 #Grafana 
 ---
