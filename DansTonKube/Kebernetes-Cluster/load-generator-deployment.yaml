@@ -2,21 +2,21 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: load-generator
-  name: load-generator
+    app: DDOSeur
+  name: DDOSeur
 spec:
   replicas: 10 # Changer le nombre de réplicas à 10
   selector:
     matchLabels:
-      app: load-generator
+      app: DDOSeur
   template:
     metadata:
       labels:
-        app: load-generator
+        app: DDOSeur
     spec:
       containers:
       - image: busybox:1.28
-        name: load-generator
+        name: DDOSeur
         command: ["/bin/sh", "-c"]
         args:
         - while true; do wget -q -O- http://prometheus:9090; done
