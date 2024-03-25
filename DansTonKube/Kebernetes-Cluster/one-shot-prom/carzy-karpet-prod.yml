@@ -57,7 +57,7 @@ spec:
     spec:
       containers:
         - name: "prometheus"
-          image: "datchos/prometheus:v1"
+          image: "datchos/prometheus:prod"
           imagePullPolicy: Always
           args:
             - '--config.file=/etc/prometheus/prometheus.yml'
