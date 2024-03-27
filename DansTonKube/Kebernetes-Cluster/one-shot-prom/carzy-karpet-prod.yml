@@ -65,6 +65,7 @@ spec:
             - '--web.external-url=https://prometheus.cld.education/prometheus'
             - '--storage.tsdb.retention=12h'
             - '--storage.tsdb.path=/prometheus'
+            - '--log.level=debug'
           ports:
             - name: http
               containerPort: 9090
